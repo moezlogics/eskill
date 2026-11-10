@@ -2,7 +2,7 @@
 // npm run seed -- --fresh  -> WARNING: deletes the whole database first
 import mongoose from "mongoose";
 
-try { process.loadEnvFile(".env.local"); } catch {} // local file optional; on a server, env vars come from the host
+for (const f of [".env.local", ".env"]) { try { process.loadEnvFile(f); } catch {} } // on a server, env vars may also come from the host
 const SOFT = process.argv.includes("--soft"); // used by build: never fail the build
 import bcrypt from "bcryptjs";
 import * as M from "../src/models/index.js";
@@ -14,7 +14,7 @@ const inDays = (d) => { const x = new Date(); x.setUTCHours(0, 0, 0, 0); x.setUT
 const capacity = (s = "") => Number(String(s).match(/\d+/)?.[0]) || 20;
 
 async function main() {
-  if (!process.env.MONGODB_URI) throw new Error("MONGODB_URI missing - create .env.local first");
+  if (!process.env.MONGODB_URI) throw new Error("MONGODB_URI missing - add it to .env or .env.local");
   await mongoose.connect(process.env.MONGODB_URI);
   console.log("[ok] Connected to MongoDB");
 
