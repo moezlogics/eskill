@@ -3,7 +3,9 @@ import { Post } from "@/models";
 import { plain } from "@/lib/utils";
 import { PageHero, PostCard, EmptyState } from "@/components/site/ui";
 
-export const metadata = { title: "Blog" };
+import { pageMeta } from "@/lib/seo";
+
+export const generateMetadata = () => pageMeta("blog", "/blog", "Blog");
 
 export default async function BlogPage() {
   await connectDB();

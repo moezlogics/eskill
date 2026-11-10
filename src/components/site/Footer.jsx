@@ -22,7 +22,7 @@ export default function Footer({ site, categories = [] }) {
       <div className="container-x pt-20 pb-10 sm:pt-28">
         <div className="grid gap-10 border-b border-paper/15 pb-16 lg:grid-cols-12 lg:items-end">
           <h2 className="display-2 text-paper lg:col-span-8">
-            Your next skill starts <span className="font-serif font-normal tracking-normal text-accent-500 italic">in a real classroom.</span>
+            {site.h_footer_title || "Your next skill starts"}{" "}<span className="font-serif font-normal tracking-normal text-accent-500 italic">{site.h_footer_highlight || "in a real classroom."}</span>
           </h2>
           <div className="flex flex-wrap gap-3 lg:col-span-4 lg:justify-end">
             <Link href="/admissions#apply" className="btn btn-accent btn-lg">Apply for a batch</Link>

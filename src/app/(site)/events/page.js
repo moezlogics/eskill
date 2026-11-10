@@ -4,7 +4,9 @@ import { plain } from "@/lib/utils";
 import { PageHero, EventCard, EmptyState } from "@/components/site/ui";
 import { LeadForm } from "@/components/site/client";
 
-export const metadata = { title: "Workshops & seminars" };
+import { pageMeta } from "@/lib/seo";
+
+export const generateMetadata = () => pageMeta("events", "/events", "Workshops & seminars");
 
 export default async function EventsPage() {
   await connectDB();

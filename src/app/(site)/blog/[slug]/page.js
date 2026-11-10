@@ -5,12 +5,13 @@ import { connectDB } from "@/lib/db";
 import { Post } from "@/models";
 import { plain, fmtDate } from "@/lib/utils";
 import { Prose, PostCard } from "@/components/site/ui";
+import { entityMeta } from "@/lib/seo";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   await connectDB();
-  const p = await Post.findOne({ slug }).select("title excerpt cover").lean();
-  return p ? { title: p.title, description: p.excerpt, openGraph: { images: p.cover ? [p.cover] : [] } } : {};
+  const p = await Post.findOne({ slug }).lean();
+  return p ? entityMeta(p, `/blog/${slug}`, { description: p.excerpt, image: p.cover, type: "article" }) : {};
 }
 
 export default async function PostPage({ params }) {

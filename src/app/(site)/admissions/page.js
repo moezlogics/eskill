@@ -4,17 +4,12 @@ import { connectDB } from "@/lib/db";
 import { getSettings } from "@/lib/data";
 import { Course, Faq } from "@/models";
 import { plain, fmtDate, cn } from "@/lib/utils";
-import { Kicker, Mark, Faqs } from "@/components/site/ui";
+import { Kicker, TitleMark, Faqs } from "@/components/site/ui";
+import { sec } from "@/lib/content";
+import { pageMeta } from "@/lib/seo";
 import { LeadForm } from "@/components/site/client";
 
-export const metadata = { title: "Admissions" };
-
-const BATCH_TIMES = [
-  ["Morning", "10 AM – 1 PM", "Best for students and fresh graduates"],
-  ["Afternoon", "2 PM – 5 PM", "For those with flexible days"],
-  ["Evening", "6 PM – 9 PM", "For working people and business owners"],
-  ["Weekend", "Sat & Sun", "For anyone busy during the week"],
-];
+export const generateMetadata = () => pageMeta("admissions", "/admissions", "Admissions");
 
 export default async function AdmissionsPage() {
   await connectDB();
@@ -30,15 +25,16 @@ export default async function AdmissionsPage() {
   const steps = s.admissionSteps || [];
   const eligibility = s.eligibility || [];
   const wa = String(s.whatsapp || "").replace(/\D/g, "");
+  const S = (k) => sec(s, k);
 
   return (
     <>
       <section className="border-b border-line">
         <div className="container-x pt-16 pb-14 sm:pt-24 sm:pb-20">
-          <Kicker>Admissions open</Kicker>
-          <h1 className="display-page mt-5 max-w-5xl">Joining is simple. <Mark>Seats are limited.</Mark></h1>
+          <Kicker>{S("admissions_hero").kicker}</Kicker>
+          <h1 className="display-page mt-5 max-w-5xl"><TitleMark t={S("admissions_hero")} /></h1>
           <p className="mt-6 max-w-2xl text-xl leading-relaxed text-muted">
-            Apply in 30 seconds, get a free counselling call or campus visit, and reserve your seat in the batch and timing that suits you.
+            {S("admissions_hero").text}
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
             <a href="#apply" className="btn btn-primary btn-lg">Apply now</a>
@@ -50,7 +46,7 @@ export default async function AdmissionsPage() {
       {steps.length > 0 && (
         <section className="section">
           <div className="container-x">
-            <Kicker>How admission works</Kicker>
+            <Kicker>{S("admissions_steps").kicker}</Kicker>
             <ol className="mt-10 grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-4">
               {steps.map((st, i) => (
                 <li key={st.title} className="border-t border-ink pt-6">
@@ -67,16 +63,16 @@ export default async function AdmissionsPage() {
       <section className="section bg-forest text-paper">
         <div className="container-x grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <Kicker light>Who can apply</Kicker>
-            <h2 className="display-2 mt-4 text-paper">If you can use a computer, you can start.</h2>
+            <Kicker light>{S("admissions_eligibility").kicker}</Kicker>
+            <h2 className="display-2 mt-4 text-paper">{S("admissions_eligibility").title}</h2>
             <ul className="mt-8 space-y-4 text-[17px] text-paper/85">
               {eligibility.map((e) => <li key={e} className="flex gap-3"><Check size={20} className="mt-0.5 shrink-0 text-accent-500" />{e}</li>)}
             </ul>
           </div>
           <div className="lg:col-span-7">
-            <Kicker light>Batch timings</Kicker>
+            <Kicker light>{S("admissions_timings").kicker}</Kicker>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {BATCH_TIMES.map(([t, h, d]) => (
+              {(s.batchTimes || []).map(({ title: t, hours: h, text: d }) => (
                 <div key={t} className="rounded-[20px] border border-paper/15 p-6">
                   <p className="text-2xl font-extrabold tracking-tight">{t}</p>
                   <p className="mt-1 font-semibold text-accent-500">{h}</p>
@@ -84,15 +80,15 @@ export default async function AdmissionsPage() {
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-[14px] text-paper/60">Exact timings vary by program — check the batch list below or ask admissions.</p>
+            <p className="mt-4 text-[14px] text-paper/60">{S("admissions_timings").text}</p>
           </div>
         </div>
       </section>
 
       <section className="section">
         <div className="container-x">
-          <Kicker>Upcoming batches</Kicker>
-          <h2 className="display-2 mt-4">Every program, every start date.</h2>
+          <Kicker>{S("admissions_batches").kicker}</Kicker>
+          <h2 className="display-2 mt-4">{S("admissions_batches").title}</h2>
           {batches.length ? (
             <div className="mt-12 overflow-x-auto rounded-[24px] border border-line bg-white">
               <table className="w-full min-w-[720px] text-left text-[16px]">
@@ -126,7 +122,7 @@ export default async function AdmissionsPage() {
         <div className="container-x">
           <div className="grid gap-10 rounded-[32px] bg-brand-600 p-8 text-white sm:p-12 lg:grid-cols-12 lg:gap-14 lg:p-16">
             <div className="lg:col-span-5">
-              <p className="text-lg font-semibold text-white/80">Application form</p>
+              <p className="text-lg font-semibold text-white/80">{S("admissions_form").kicker}</p>
               <h2 className="display-2 mt-4 text-white">{s.ctaTitle}</h2>
               <p className="mt-6 text-lg leading-relaxed text-white/85">{s.ctaText}</p>
               <div className="mt-10 space-y-4 text-[17px]">
@@ -137,7 +133,7 @@ export default async function AdmissionsPage() {
             </div>
             <div className="rounded-[24px] bg-white p-6 text-ink sm:p-8 lg:col-span-7">
               <LeadForm source="admissions" options={courses.map((c) => c.title)} showTiming showCity showMessage
-                title="Apply for a batch" subtitle="No fee to apply. An advisor will call you within one working day." cta="Send my application" />
+                timings={s.formTimings} title={S("admissions_form").title} subtitle={S("admissions_form").text} cta="Send my application" />
             </div>
           </div>
         </div>
@@ -147,8 +143,8 @@ export default async function AdmissionsPage() {
         <section className="section">
           <div className="container-x grid gap-12 lg:grid-cols-12">
             <div className="lg:col-span-4">
-              <Kicker>FAQ</Kicker>
-              <h2 className="display-2 mt-4">Before you apply.</h2>
+              <Kicker>{S("admissions_faq").kicker}</Kicker>
+              <h2 className="display-2 mt-4">{S("admissions_faq").title}</h2>
             </div>
             <div className="lg:col-span-8"><Faqs items={faqs} /></div>
           </div>

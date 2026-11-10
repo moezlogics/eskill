@@ -39,7 +39,7 @@ export const Course = model("Course", new Schema({
   thumbnail: String, previewVideo: String,
   price: { type: Number, default: 0 }, salePrice: { type: Number, default: 0 },
   level: String, mode: String, language: String, duration: String, liveHours: String, projectsCount: String,
-  schedule: String, classSize: String, intro: String, coverLabel: String,
+  schedule: String, classSize: String, intro: String, coverLabel: String, seoTitle: String, seoDescription: String, ogImage: String,
   whoFor: [String], careerPaths: [String],
   differentiators: [{ title: String, text: String }],
   rating: { type: Number, default: 0 }, reviewsCount: { type: Number, default: 0 }, studentsCount: { type: Number, default: 0 },
@@ -61,13 +61,13 @@ export const Faq = model("Faq", new Schema({ question: String, answer: String, o
 
 export const Post = model("Post", new Schema({
   title: { type: String, required: true }, slug: { type: String, unique: true },
-  excerpt: String, cover: String, author: String, tags: [String], content: String,
+  excerpt: String, cover: String, author: String, tags: [String], content: String, seoTitle: String, seoDescription: String, ogImage: String,
   published: { type: Boolean, default: true },
 }, opts));
 
 export const Page = model("Page", new Schema({
   title: { type: String, required: true }, slug: { type: String, unique: true },
-  content: String, published: { type: Boolean, default: true },
+  content: String, published: { type: Boolean, default: true }, seoTitle: String, seoDescription: String, ogImage: String,
 }, opts));
 
 export const Partner = model("Partner", new Schema({ name: String, logo: String, order: { type: Number, default: 0 } }, opts));

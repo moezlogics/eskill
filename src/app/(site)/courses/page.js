@@ -5,7 +5,9 @@ import { plain, cn, escapeRegex } from "@/lib/utils";
 import CourseCard from "@/components/site/CourseCard";
 import { Kicker, Mark, EmptyState } from "@/components/site/ui";
 
-export const metadata = { title: "Programs" };
+import { pageMeta } from "@/lib/seo";
+
+export const generateMetadata = () => pageMeta("courses", "/courses", "Programs");
 
 const LEVELS = ["Beginner", "Intermediate", "Advanced", "All Levels"];
 const MODES = ["On-Campus", "Hybrid", "Live Online"];

@@ -59,6 +59,10 @@ const COURSE_FIELDS = [
     fields: [{ name: "name" }, { name: "logo", type: "image" }] },
   { name: "faqs", label: "Program FAQs", type: "repeater", itemLabel: "question", addLabel: "FAQ",
     fields: [{ name: "question", full: true }, { name: "answer", type: "textarea", full: true }] },
+  { type: "heading", label: "SEO (Google & social sharing)" },
+  { name: "seoTitle", label: "SEO title", full: true, help: "Leave empty to use the normal title. Ideal: 50–60 characters" },
+  { name: "seoDescription", label: "SEO description", type: "textarea", rows: 2, full: true, help: "Ideal: 140–160 characters" },
+  { name: "ogImage", label: "Share image (WhatsApp / Facebook preview)", type: "image" },
 ];
 
 export const RESOURCES = {
@@ -141,14 +145,22 @@ export const RESOURCES = {
     fields: [{ name: "title", required: true }, { name: "slug" }, { name: "author" }, { name: "cover", type: "image" },
       { name: "excerpt", type: "textarea", rows: 2, full: true }, { name: "tags", label: "Tags (one per line)", type: "lines" },
       { name: "content", type: "textarea", rows: 16, full: true, help: "## heading, - bullet, blank line = new paragraph" },
-      { name: "published", type: "boolean", default: true, help: "Visible on website" }],
+      { name: "published", type: "boolean", default: true, help: "Visible on website" },
+      { type: "heading", label: "SEO (Google & social sharing)" },
+  { name: "seoTitle", label: "SEO title", full: true, help: "Leave empty to use the normal title. Ideal: 50–60 characters" },
+  { name: "seoDescription", label: "SEO description", type: "textarea", rows: 2, full: true, help: "Ideal: 140–160 characters" },
+  { name: "ogImage", label: "Share image (WhatsApp / Facebook preview)", type: "image" },],
   },
   pages: {
     label: "Pages", singular: "Page", viewUrl: (i) => `/p/${i.slug}`,
     intro: "Footer links use these slugs: privacy-policy, terms-and-conditions, refund-policy.",
     columns: [{ key: "title", label: "Title" }, { key: "slug", label: "Slug" }, { key: "published", label: "Live", type: "bool" }],
     fields: [{ name: "title", required: true }, { name: "slug" }, { name: "content", type: "textarea", rows: 18, full: true },
-      { name: "published", type: "boolean", default: true, help: "Visible on website" }],
+      { name: "published", type: "boolean", default: true, help: "Visible on website" },
+      { type: "heading", label: "SEO (Google & social sharing)" },
+  { name: "seoTitle", label: "SEO title", full: true, help: "Leave empty to use the normal title. Ideal: 50–60 characters" },
+  { name: "seoDescription", label: "SEO description", type: "textarea", rows: 2, full: true, help: "Ideal: 140–160 characters" },
+  { name: "ogImage", label: "Share image (WhatsApp / Facebook preview)", type: "image" },],
   },
   testimonials: {
     label: "Testimonials", singular: "Testimonial",
@@ -171,12 +183,25 @@ export const RESOURCES = {
   },
 };
 
-export const SETTINGS_FIELDS = [
-  { type: "heading", label: "Brand" },
-  { name: "siteName", label: "Institute name" }, { name: "tagline" },
-  { name: "logo", type: "image", help: "PNG/SVG, ~40px tall. Empty = text logo" }, { name: "topbarText", label: "Announcement bar (optional)" },
+import { SECTIONS, SEO_PAGES } from "./content.js";
 
-  { type: "heading", label: "Contact & campus" },
+const H = (label) => ({ type: "heading", label });
+const T = (label) => ({ type: "tab", label });
+const sectionFields = (tab) => SECTIONS.filter((x) => x[2] === tab).flatMap(([key, label, , d]) => [
+  H(label),
+  { name: `h_${key}_kicker`, label: "Small label above" },
+  { name: `h_${key}_title`, label: "Title" },
+  ...(d.highlight !== undefined ? [{ name: `h_${key}_highlight`, label: "Highlighted words (serif + underline)" }] : []),
+  ...(d.text !== undefined ? [{ name: `h_${key}_text`, label: "Text", type: "textarea", rows: 2, full: true }] : []),
+]);
+
+export const SETTINGS_FIELDS = [
+  T("General"),
+  H("Brand"),
+  { name: "siteName", label: "Institute name" }, { name: "tagline" },
+  { name: "logo", type: "image", help: "PNG/SVG, ~40px tall. Empty = text logo" }, { name: "favicon", label: "Favicon (browser tab icon)", type: "image", help: "Square PNG, 512×512" },
+  { name: "topbarText", label: "Announcement bar (optional)" }, { name: "headerCta", label: "Header button text" },
+  H("Contact & campus"),
   { name: "phone" }, { name: "whatsapp", label: "WhatsApp number", help: "With country code, e.g. 923001234567" },
   { name: "email" }, { name: "address", label: "Campus address" },
   { name: "campusHours", label: "Campus hours (e.g. Mon–Sat · 10 AM – 9 PM)" },
@@ -185,33 +210,64 @@ export const SETTINGS_FIELDS = [
   { name: "campusText", label: "Campus section text", type: "textarea", full: true },
   { name: "campusImage", label: "Campus image", type: "image" },
   { name: "campusFeatures", label: "Campus features (one per line)", type: "lines" },
-
-  { type: "heading", label: "Social links" },
+  H("Social links"),
   { name: "facebook" }, { name: "instagram" }, { name: "youtube" }, { name: "linkedin" }, { name: "tiktok" },
+  ...sectionFields("General"),
+  { name: "footerAbout", label: "Footer about text", type: "textarea", full: true },
 
-  { type: "heading", label: "Homepage hero" },
+  T("Homepage"),
+  H("Hero"),
   { name: "heroBadge", label: "Small line above title" }, { name: "heroTitle", label: "Title" },
-  { name: "heroHighlight", label: "Highlighted end of title (serif + underline)" }, { name: "heroImage", type: "image" },
+  { name: "heroHighlight", label: "Highlighted end of title (serif + underline)" }, { name: "heroImage", type: "image", help: "Empty = designed visual" },
   { name: "heroSubtitle", label: "Subtitle", type: "textarea", full: true },
   { name: "stats", label: "Facts row (keep them true)", type: "repeater", itemLabel: "label", addLabel: "fact", fields: [{ name: "value" }, { name: "label" }] },
-
-  { type: "heading", label: "Mission, story & approach" },
-  { name: "mission", type: "textarea", full: true }, { name: "vision", type: "textarea", full: true },
-  { name: "aboutTitle", full: true }, { name: "aboutText", type: "textarea", full: true }, { name: "aboutImage", type: "image" },
+  H("Mission & principles"),
+  { name: "mission", type: "textarea", full: true },
   { name: "whyUs", label: "Our principles", type: "repeater", itemLabel: "title", addLabel: "principle",
     fields: [{ name: "title" }, { name: "text", type: "textarea", full: true }] },
   { name: "comparison", label: "Traditional institute vs us", type: "repeater", itemLabel: "ours", addLabel: "row",
     fields: [{ name: "topic", label: "Topic (e.g. Curriculum)" }, { name: "traditional", label: "Traditional way" }, { name: "ours", label: "Our way", full: true }] },
   { name: "howSteps", label: "How a batch works (steps)", type: "repeater", itemLabel: "title", addLabel: "step",
     fields: [{ name: "title" }, { name: "text", type: "textarea", full: true }] },
+  ...sectionFields("Homepage"),
 
-  { type: "heading", label: "Admissions" },
+  T("Pages text"),
+  H("About page"),
+  { name: "aboutTitle", full: true }, { name: "aboutText", type: "textarea", full: true }, { name: "aboutImage", type: "image" },
+  { name: "vision", type: "textarea", full: true },
+  { name: "trainerPrinciples", label: "Shown while no trainers are added", type: "repeater", itemLabel: "title", addLabel: "point",
+    fields: [{ name: "title" }, { name: "text", type: "textarea", full: true }] },
+  H("Program pages"),
+  { name: "certificatePoints", label: "Certificate points (one per line)", type: "lines" },
+  ...sectionFields("Pages text"),
+
+  T("Admissions"),
   { name: "admissionSteps", label: "Admission process", type: "repeater", itemLabel: "title", addLabel: "step",
     fields: [{ name: "title" }, { name: "text", type: "textarea", full: true }] },
   { name: "eligibility", label: "Who can apply (one per line)", type: "lines" },
-  { name: "ctaTitle", label: "Apply section title", full: true }, { name: "ctaText", label: "Apply section text", type: "textarea", full: true },
+  { name: "batchTimes", label: "Batch timing cards", type: "repeater", itemLabel: "title", addLabel: "timing",
+    fields: [{ name: "title" }, { name: "hours" }, { name: "text", full: true }] },
+  { name: "formTimings", label: "Timing options in forms (one per line)", type: "lines" },
+  { name: "ctaTitle", label: "Apply section title (home & admissions)", full: true }, { name: "ctaText", label: "Apply section text", type: "textarea", full: true },
 
-  { type: "heading", label: "Footer & SEO" },
-  { name: "footerAbout", type: "textarea", full: true }, { name: "seoTitle", label: "SEO title", full: true },
-  { name: "seoDescription", label: "SEO description", type: "textarea", full: true },
+  T("SEO & tracking"),
+  H("Whole site"),
+  { name: "siteUrl", label: "Website URL", help: "e.g. https://eskills.pk — used for sitemap, canonical links and share previews" },
+  { name: "seoTitle", label: "Default SEO title", full: true },
+  { name: "seoDescription", label: "Default SEO description", type: "textarea", rows: 2, full: true },
+  { name: "ogImage", label: "Default share image (1200×630)", type: "image" },
+  { name: "googleVerification", label: "Google Search Console verification code", help: "Only the content value of the meta tag" },
+  { name: "ga4Id", label: "Google Analytics 4 ID", help: "e.g. G-XXXXXXX" },
+  ...SEO_PAGES.flatMap(([key, label]) => [
+    H(`SEO · ${label}`),
+    { name: `seo_${key}_title`, label: "SEO title", full: true, help: "Leave empty to use the default" },
+    { name: `seo_${key}_description`, label: "SEO description", type: "textarea", rows: 2, full: true },
+    { name: `seo_${key}_image`, label: "Share image", type: "image" },
+  ]),
+
+  T("Online (later)"),
+  H("Payment details (for online courses later)"),
+  { name: "bankName" }, { name: "accountTitle" }, { name: "accountNumber" }, { name: "iban", label: "IBAN" },
+  { name: "jazzcash", label: "JazzCash number" }, { name: "easypaisa", label: "Easypaisa number" },
+  { name: "paymentNote", type: "textarea", full: true },
 ];

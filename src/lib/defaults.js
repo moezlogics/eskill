@@ -1,4 +1,27 @@
+import { SECTION_DEFAULTS } from "./content.js";
+
 export const DEFAULT_SETTINGS = {
+  ...SECTION_DEFAULTS,
+  siteUrl: "",
+  ogImage: "",
+  favicon: "",
+  googleVerification: "",
+  ga4Id: "",
+  headerCta: "Apply now",
+  formTimings: ["Morning (10 AM – 1 PM)", "Afternoon (2 PM – 5 PM)", "Evening (6 PM – 9 PM)", "Weekend"],
+  batchTimes: [
+    { title: "Morning", hours: "10 AM – 1 PM", text: "Best for students and fresh graduates" },
+    { title: "Afternoon", hours: "2 PM – 5 PM", text: "For those with flexible days" },
+    { title: "Evening", hours: "6 PM – 9 PM", text: "For working people and business owners" },
+    { title: "Weekend", hours: "Sat & Sun", text: "For anyone busy during the week" },
+  ],
+  trainerPrinciples: [
+    { title: "Active practitioners", text: "Every trainer runs live SEO, ads, automation or development projects alongside teaching." },
+    { title: "Show, then do", text: "Trainers demo on a real screen, then sit with you while you do it yourself." },
+    { title: "Honest feedback", text: "Your work is reviewed line by line — what's good, what's not, and how to fix it." },
+    { title: "Reachable", text: "Questions after class? Trainers stay for practice time and answer on the class group." },
+  ],
+  certificatePoints: ["Awarded after your final project is reviewed", "Unique certificate ID for every student", "Anyone can verify it on our website", "Add it to your CV, LinkedIn and Fiverr/Upwork profile"],
   siteName: "eSkill Institute",
   tagline: "An on-campus institute for search, marketing, AI and web skills — taught by people who do the work.",
   logo: "",
@@ -79,6 +102,6 @@ export const DEFAULT_SETTINGS = {
   paymentNote: "",
 
   footerAbout: "An on-campus institute teaching SEO, AI search, social media, Meta ads, AI automation, web development and vibe coding — in small, project-based batches.",
-  seoTitle: "",
+  seoTitle: "eSkill Institute — SEO, AI Search, Marketing & Web Courses in Pakistan",
   seoDescription: "On-campus courses in SEO, Local SEO, Technical SEO, AI SEO, AEO, GEO, social media marketing, Meta ads, AI automation, web development and vibe coding.",
 };

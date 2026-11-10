@@ -9,13 +9,15 @@ import { plain, cn, fmtDate, toEmbed } from "@/lib/utils";
 import { Prose, Faqs, MentorCard, TestimonialCard, ProgramCover, Kicker } from "@/components/site/ui";
 import CourseCard, { nextBatchOf } from "@/components/site/CourseCard";
 import { LeadForm } from "@/components/site/client";
+import { sec } from "@/lib/content";
+import { entityMeta } from "@/lib/seo";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   await connectDB();
-  const c = await Course.findOne({ slug }).select("title subtitle thumbnail").lean();
+  const c = await Course.findOne({ slug }).lean();
   if (!c) return {};
-  return { title: c.title, description: c.subtitle, openGraph: { images: c.thumbnail ? [c.thumbnail] : [] } };
+  return entityMeta(c, `/courses/${slug}`, { description: c.subtitle || c.intro, image: c.thumbnail });
 }
 
 function Block({ id, n, title, intro, children }) {
@@ -50,6 +52,13 @@ export default async function CoursePage({ params }) {
   const topics = sections.reduce((n, sec) => n + (sec.lessons?.length || 0), 0);
   const nb = nextBatchOf(c);
   const wa = String(s.whatsapp || "").replace(/\D/g, "");
+  const site = (s.siteUrl || "").replace(/\/$/, "");
+  const jsonLd = {
+    "@context": "https://schema.org", "@type": "Course", name: c.title, description: c.seoDescription || c.subtitle || c.intro,
+    url: site ? `${site}/courses/${c.slug}` : undefined,
+    provider: { "@type": "EducationalOrganization", name: s.siteName, url: site || undefined },
+    hasCourseInstance: (c.batches || []).filter((b) => b.startDate).map((b) => ({ "@type": "CourseInstance", courseMode: "Onsite", startDate: String(b.startDate).slice(0, 10), location: s.address ? { "@type": "Place", name: s.siteName, address: s.address } : undefined })),
+  };
 
   const facts = [
     ["Duration", c.duration], ["Schedule", c.schedule], ["Class hours", c.liveHours],
@@ -67,6 +76,7 @@ export default async function CoursePage({ params }) {
 
   return (
     <div className="pb-24 lg:pb-0">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       {/* HERO */}
       <section className="border-b border-line">
         <div className="container-x grid gap-12 pt-10 pb-14 sm:pt-14 lg:grid-cols-12 lg:gap-10 lg:pb-20">
@@ -221,7 +231,7 @@ export default async function CoursePage({ params }) {
           )}
 
           {c.projects?.length > 0 && (
-            <Block id="projects" n={num()} title="What you'll build" intro="Every project is done in class with trainer feedback — and goes straight into your portfolio.">
+            <Block id="projects" n={num()} title="What you'll build" intro={sec(s, "program_projects").text}>
               <div className="grid gap-5 sm:grid-cols-2">
                 {c.projects.map((p, i) => (
                   <article key={p._id || i} className="overflow-hidden rounded-[20px] border border-line bg-white">
@@ -295,7 +305,7 @@ export default async function CoursePage({ params }) {
           <Block id="certificate" n={num()} title="Certificate">
             <div className="grid items-center gap-8 rounded-[24px] bg-forest p-8 text-paper sm:p-10 md:grid-cols-2">
               <ul className="space-y-4 text-[17px] text-paper/85">
-                {["Awarded after your final project is reviewed", "Unique certificate ID for every student", "Anyone can verify it on our website", "Add it to your CV, LinkedIn and Fiverr/Upwork profile"].map((t) => (
+                {(s.certificatePoints || []).map((t) => (
                   <li key={t} className="flex gap-3"><Check size={20} className="mt-0.5 shrink-0 text-accent-500" />{t}</li>
                 ))}
               </ul>
@@ -326,8 +336,8 @@ export default async function CoursePage({ params }) {
         <aside className="lg:col-span-4">
           <div id="apply" className="scroll-mt-40 lg:sticky lg:top-40">
             <div className="rounded-[24px] bg-ink p-7 text-paper sm:p-8">
-              <LeadForm dark source="program-page" course={c.title} showTiming title="Apply for this program"
-                subtitle="Leave your details — admissions will call you with batch dates and timings." cta="Send my application" />
+              <LeadForm dark source="program-page" course={c.title} showTiming timings={s.formTimings} title={sec(s, "program_form").title}
+                subtitle={sec(s, "program_form").text} cta="Send my application" />
             </div>
             {s.phone && (
               <a href={`tel:${s.phone}`} className="mt-4 flex items-center justify-between rounded-[20px] border border-line bg-white p-5 transition hover:border-ink">

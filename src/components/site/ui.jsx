@@ -20,6 +20,11 @@ export function HandArrow({ className = "" }) {
   );
 }
 
+/* Title + optional highlighted words, from a settings section */
+export function TitleMark({ t, color }) {
+  return <>{t.title}{t.highlight && <>{t.title ? " " : ""}<Mark color={color}>{t.highlight}</Mark></>}</>;
+}
+
 /* Serif italic words with a hand-drawn underline (repeats under every wrapped line) */
 const MARK_COLORS = { "text-brand-600": "#f2511b", "text-accent-500": "#ffc83d" };
 const scribbleBg = (hex) =>

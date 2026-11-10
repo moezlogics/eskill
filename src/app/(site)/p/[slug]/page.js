@@ -3,12 +3,13 @@ import { connectDB } from "@/lib/db";
 import { Page } from "@/models";
 import { plain, fmtDate } from "@/lib/utils";
 import { PageHero, Prose } from "@/components/site/ui";
+import { entityMeta } from "@/lib/seo";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   await connectDB();
-  const p = await Page.findOne({ slug }).select("title").lean();
-  return p ? { title: p.title } : {};
+  const p = await Page.findOne({ slug }).lean();
+  return p ? entityMeta(p, `/p/${slug}`, { description: p.content }) : {};
 }
 
 export default async function CmsPage({ params }) {

@@ -17,7 +17,8 @@ const safeNext = (n) => (n && n.startsWith("/") && !n.startsWith("//") ? n : "")
 /* ---------- Lead / callback / counselling form ---------- */
 export const TIMINGS = ["Morning (10 AM – 1 PM)", "Afternoon (2 PM – 5 PM)", "Evening (6 PM – 9 PM)", "Weekend"];
 
-export function LeadForm({ source = "website", options = [], course = "", title, subtitle, cta = "Request a callback", showMessage = false, showTiming = false, showCity = false, dark = false }) {
+export function LeadForm({ source = "website", options = [], course = "", title, subtitle, cta = "Request a callback", showMessage = false, showTiming = false, showCity = false, dark = false, timings }) {
+  const timingOptions = timings?.length ? timings : TIMINGS;
   const [state, setState] = useState({ loading: false, done: false, error: "" });
 
   async function submit(e) {
@@ -69,7 +70,7 @@ export function LeadForm({ source = "website", options = [], course = "", title,
           {showTiming && (
             <select name="preferredTime" defaultValue="" className={cn(input, !showCity && "sm:col-span-2")}>
               <option value="" disabled>Preferred timing…</option>
-              {TIMINGS.map((t) => <option key={t} value={t} className="text-ink">{t}</option>)}
+              {timingOptions.map((t) => <option key={t} value={t} className="text-ink">{t}</option>)}
             </select>
           )}
           {showCity && <input name="city" placeholder="City / area" className={cn(input, !showTiming && "sm:col-span-2")} />}

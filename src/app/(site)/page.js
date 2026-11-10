@@ -5,8 +5,12 @@ import { getSettings } from "@/lib/data";
 import { Course, Category, Instructor, Testimonial, Faq, Partner, Post, Event } from "@/models";
 import { plain, fmtDate, cn } from "@/lib/utils";
 import CourseCard from "@/components/site/CourseCard";
-import { SectionHead, Kicker, Mark, HandArrow, Avatar, Faqs, MentorCard, TestimonialCard, EventCard, PostCard, HeroBoard, PhotoOr } from "@/components/site/ui";
+import { sec } from "@/lib/content";
+import { pageMeta } from "@/lib/seo";
+import { SectionHead, TitleMark, Kicker, Mark, HandArrow, Avatar, Faqs, MentorCard, TestimonialCard, EventCard, PostCard, HeroBoard, PhotoOr } from "@/components/site/ui";
 import { LeadForm } from "@/components/site/client";
+
+export const generateMetadata = () => pageMeta("home", "/");
 
 export default async function HomePage() {
   await connectDB();
@@ -36,9 +40,19 @@ export default async function HomePage() {
   const comparison = s.comparison || [];
   const howSteps = s.howSteps || [];
   const ticker = courses.map((c) => c.title);
+  const S = (k) => sec(s, k, courses.length);
+  const site = (s.siteUrl || "").replace(/\/$/, "");
+  const orgLd = {
+    "@context": "https://schema.org", "@type": "EducationalOrganization", name: s.siteName, description: s.seoDescription || s.tagline,
+    url: site || undefined, logo: s.logo ? (site + s.logo) : undefined, telephone: s.phone || undefined, email: s.email || undefined,
+    address: s.address ? { "@type": "PostalAddress", streetAddress: s.address, addressCountry: "PK" } : undefined,
+    sameAs: [s.facebook, s.instagram, s.youtube, s.linkedin, s.tiktok].filter(Boolean),
+  };
+  const SH = (k, extra = {}) => ({ kicker: S(k).kicker, title: <TitleMark t={S(k)} color={extra.color} />, text: S(k).text || undefined });
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd).replace(/</g, "\\u003c") }} />
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="container-x grid gap-14 pt-14 pb-20 sm:pt-20 lg:grid-cols-12 lg:gap-10 lg:pt-24 lg:pb-28">
@@ -103,7 +117,7 @@ export default async function HomePage() {
       {/* MISSION */}
       <section className="section">
         <div className="container-x grid gap-8 lg:grid-cols-12">
-          <div className="lg:col-span-3"><Kicker>Why we exist</Kicker></div>
+          <div className="lg:col-span-3"><Kicker>{S("home_mission").kicker}</Kicker></div>
           <div className="lg:col-span-9">
             <p className="text-[clamp(26px,3.2vw,46px)] leading-[1.18] font-semibold tracking-[-0.02em]">{s.mission}</p>
             <Link href="/about" className="link-u mt-8 inline-flex items-center gap-2 text-lg font-semibold">Read our story <ArrowRight size={18} /></Link>
@@ -126,8 +140,7 @@ export default async function HomePage() {
       {tracks.length > 0 && (
         <section className="section border-t border-line bg-white">
           <div className="container-x">
-            <SectionHead kicker="What we teach" title={<>{courses.length} programs. <Mark>One goal: job-ready.</Mark></>}
-              text="Pick one specialisation or stack them. Each program has its own page with the full curriculum, schedule and projects."
+            <SectionHead {...SH("home_programs")}
               action={<Link href="/courses" className="btn btn-dark">All programs <ArrowRight size={18} /></Link>} />
             <div className="mt-16 space-y-14">
               {tracks.map((t, ti) => (
@@ -167,7 +180,7 @@ export default async function HomePage() {
       {featured.length > 0 && (
         <section className="section">
           <div className="container-x">
-            <SectionHead kicker="Most asked about" title="Where most students start"
+            <SectionHead {...SH("home_featured")}
               action={<Link href="/courses" className="btn btn-outline">Browse all <ArrowRight size={18} /></Link>} />
             <div className="mt-14 grid gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
               {featured.map((c) => <CourseCard key={c._id} course={c} />)}
@@ -180,8 +193,7 @@ export default async function HomePage() {
       {comparison.length > 0 && (
         <section className="section bg-ink text-paper">
           <div className="container-x">
-            <SectionHead light kicker="Why we're different" title={<>Not another <Mark color="text-accent-500">computer course.</Mark></>}
-              text="Here's what changes when the syllabus is built by people who do this work every week." />
+            <SectionHead light {...SH("home_compare", { color: "text-accent-500" })} />
             <div className="mt-14 overflow-hidden rounded-[24px] border border-paper/15">
               <div className="hidden grid-cols-12 border-b border-paper/15 bg-paper/5 px-6 py-4 text-[14px] font-semibold text-paper/60 md:grid">
                 <span className="col-span-2">Topic</span><span className="col-span-4">Typical institute</span><span className="col-span-6 text-accent-500">At {s.siteName}</span>
@@ -202,7 +214,7 @@ export default async function HomePage() {
       {howSteps.length > 0 && (
         <section className="section bg-forest text-paper">
           <div className="container-x">
-            <SectionHead light kicker="How a batch works" title={<>From first visit to <Mark color="text-accent-500">final project.</Mark></>} />
+            <SectionHead light {...SH("home_how", { color: "text-accent-500" })} />
             <ol className="mt-16 grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-4">
               {howSteps.map((st, i) => (
                 <li key={st.title} className="border-t border-paper/25 pt-6">
@@ -220,7 +232,7 @@ export default async function HomePage() {
       {batches.length > 0 && (
         <section className="section">
           <div className="container-x">
-            <SectionHead kicker="Upcoming batches" title="Seats are limited. Pick your start date."
+            <SectionHead {...SH("home_batches")}
               action={<Link href="/admissions" className="btn btn-outline">Admissions <ArrowRight size={18} /></Link>} />
             <div className="mt-14 border-t border-ink">
               {batches.map((b, i) => (
@@ -244,10 +256,10 @@ export default async function HomePage() {
         <div className="container-x grid items-center gap-12 lg:grid-cols-12">
           <div className="lg:col-span-6">
             <PhotoOr src={s.campusImage} alt="Campus" className="aspect-[4/3] w-full rounded-[28px]"
-              title="Your classroom is waiting." lines={s.campusFeatures || []} />
+              title={S("home_campus").title} lines={s.campusFeatures || []} />
           </div>
           <div className="lg:col-span-6">
-            <Kicker>The campus</Kicker>
+            <Kicker>{S("home_campus").kicker}</Kicker>
             <h2 className="display-2 mt-4">{s.campusTitle}</h2>
             <p className="mt-6 text-lg leading-relaxed text-muted">{s.campusText}</p>
             {s.campusImage && (s.campusFeatures || []).length > 0 && (
@@ -268,8 +280,7 @@ export default async function HomePage() {
       {mentors.length > 0 && (
         <section className="section">
           <div className="container-x">
-            <SectionHead kicker="Trainers" title={<>Taught by people who <Mark>do the work.</Mark></>}
-              text="Every trainer runs live client projects — and brings them into class." />
+            <SectionHead {...SH("home_trainers")} />
             <div className="mt-14 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
               {mentors.map((m) => <MentorCard key={m._id} m={m} />)}
             </div>
@@ -281,7 +292,7 @@ export default async function HomePage() {
       {reviews.length > 0 && (
         <section className="section border-t border-line bg-white">
           <div className="container-x">
-            <SectionHead kicker="Student stories" title="In their own words" />
+            <SectionHead {...SH("home_stories")} />
             <div className="mt-14 grid gap-6 lg:grid-cols-3">
               <figure className="flex flex-col justify-between rounded-[24px] bg-ink p-8 text-paper sm:p-10 lg:col-span-2 lg:row-span-2">
                 <blockquote className="font-serif text-[clamp(26px,3vw,42px)] leading-[1.2]">“{reviews[0].text}”</blockquote>
@@ -319,7 +330,7 @@ export default async function HomePage() {
       {events.length > 0 && (
         <section className="section border-t border-line">
           <div className="container-x">
-            <SectionHead kicker="Free workshops" title="Come for a workshop. See how we teach."
+            <SectionHead {...SH("home_workshops")}
               action={<Link href="/events" className="btn btn-outline">All workshops <ArrowRight size={18} /></Link>} />
             <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {events.map((e) => <EventCard key={e._id} e={e} />)}
@@ -333,7 +344,7 @@ export default async function HomePage() {
         <div className="container-x">
           <div className="grid gap-10 rounded-[32px] bg-brand-600 p-8 text-white sm:p-12 lg:grid-cols-12 lg:gap-14 lg:p-16">
             <div className="lg:col-span-6">
-              <p className="text-lg font-semibold text-white/80">Admissions open</p>
+              <p className="text-lg font-semibold text-white/80">{S("home_apply").kicker}</p>
               <h2 className="display-2 mt-4 text-white">{s.ctaTitle}</h2>
               <p className="mt-6 max-w-lg text-lg leading-relaxed text-white/85">{s.ctaText}</p>
               {s.phone && (
@@ -344,7 +355,7 @@ export default async function HomePage() {
             </div>
             <div className="rounded-[24px] bg-white p-6 text-ink sm:p-8 lg:col-span-6">
               <LeadForm source="home-apply" options={courses.map((c) => c.title)} showTiming showCity
-                title="Apply for the next batch" subtitle="Takes 30 seconds. We'll call you back." cta="Send my application" />
+                timings={s.formTimings} title={S("home_apply").title} subtitle={S("home_apply").text} cta="Send my application" />
             </div>
           </div>
         </div>
@@ -355,8 +366,8 @@ export default async function HomePage() {
         <section className="section">
           <div className="container-x grid gap-12 lg:grid-cols-12">
             <div className="lg:col-span-4">
-              <Kicker>FAQ</Kicker>
-              <h2 className="display-2 mt-4">Questions, answered.</h2>
+              <Kicker>{S("home_faq").kicker}</Kicker>
+              <h2 className="display-2 mt-4">{S("home_faq").title}</h2>
               {s.phone && (
                 <p className="mt-6 text-lg text-muted">
                   Still unsure? Call us on <a href={`tel:${s.phone}`} className="link-u font-semibold text-ink">{s.phone}</a>
@@ -372,7 +383,7 @@ export default async function HomePage() {
       {posts.length > 0 && (
         <section className="section border-t border-line">
           <div className="container-x">
-            <SectionHead kicker="From the blog" title="Guides for your next step"
+            <SectionHead {...SH("home_blog")}
               action={<Link href="/blog" className="btn btn-outline">Read the blog <ArrowRight size={18} /></Link>} />
             <div className="mt-14 grid gap-x-8 gap-y-12 md:grid-cols-3">
               {posts.map((p) => <PostCard key={p._id} p={p} />)}

@@ -88,7 +88,7 @@ export default function Header({ site, user, categories = [] }) {
               </a>
             )}
             {isAdmin && <Link href="/admin" className="link-u text-[15px] font-semibold">Admin</Link>}
-            <Link href="/admissions#apply" className="btn btn-primary">Apply now</Link>
+            <Link href="/admissions#apply" className="btn btn-primary">{site.headerCta || "Apply now"}</Link>
           </div>
 
           <button onClick={() => setOpen(!open)} aria-expanded={open}
@@ -119,7 +119,7 @@ export default function Header({ site, user, categories = [] }) {
               </div>
             ))}
             <div className="mt-10 grid gap-3">
-              <Link href="/admissions#apply" onClick={close} className="btn btn-primary btn-lg">Apply now</Link>
+              <Link href="/admissions#apply" onClick={close} className="btn btn-primary btn-lg">{site.headerCta || "Apply now"}</Link>
               {isAdmin && <Link href="/admin" onClick={close} className="btn btn-outline btn-lg">Admin panel</Link>}
             </div>
             {site.phone && <a href={`tel:${site.phone}`} className="mt-8 flex items-center gap-2 text-xl font-bold"><Phone size={20} />{site.phone}</a>}

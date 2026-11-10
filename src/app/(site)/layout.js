@@ -19,7 +19,7 @@ export default async function SiteLayout({ children }) {
   const categories = plain(cats).map((c) => ({ ...c, programs: programs.filter((p) => String(p.category) === c._id) }));
   const site = {
     siteName: settings.siteName, logo: settings.logo, phone: settings.phone,
-    email: settings.email, topbarText: settings.topbarText,
+    email: settings.email, topbarText: settings.topbarText, headerCta: settings.headerCta,
   };
   const wa = String(settings.whatsapp || "").replace(/\D/g, "");
 

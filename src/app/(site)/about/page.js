@@ -4,9 +4,11 @@ import { connectDB } from "@/lib/db";
 import { getSettings } from "@/lib/data";
 import { Instructor, Testimonial } from "@/models";
 import { plain } from "@/lib/utils";
-import { Kicker, Mark, PhotoOr, Prose, StatsBand, SectionHead, MentorCard, TestimonialCard } from "@/components/site/ui";
+import { sec } from "@/lib/content";
+import { pageMeta } from "@/lib/seo";
+import { TitleMark, Kicker, Mark, PhotoOr, Prose, StatsBand, SectionHead, MentorCard, TestimonialCard } from "@/components/site/ui";
 
-export const metadata = { title: "About us" };
+export const generateMetadata = () => pageMeta("about", "/about", "About us");
 
 export default async function AboutPage() {
   await connectDB();
@@ -16,6 +18,7 @@ export default async function AboutPage() {
     Testimonial.find({ featured: true }).sort({ order: 1 }).limit(3).lean(),
   ]).then((r) => r.map(plain));
   const whyUs = s.whyUs || [];
+  const S = (k) => sec(s, k);
 
   return (
     <>
@@ -30,10 +33,10 @@ export default async function AboutPage() {
       <section className="section">
         <div className="container-x grid items-start gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <PhotoOr src={s.aboutImage} alt={s.siteName} className="aspect-[4/5] w-full rounded-[28px]" title="Practitioners first. Teachers second." />
+            <PhotoOr src={s.aboutImage} alt={s.siteName} className="aspect-[4/5] w-full rounded-[28px]" title={S("about_story").title} />
           </div>
           <div className="lg:col-span-7 lg:pt-4">
-            <Kicker>Our story</Kicker>
+            <Kicker>{S("about_story").kicker}</Kicker>
             <Prose text={s.aboutText} className="mt-6 text-[19px]" />
           </div>
         </div>
@@ -60,7 +63,7 @@ export default async function AboutPage() {
       {whyUs.length > 0 && (
         <section className="section border-t border-line bg-white">
           <div className="container-x">
-            <SectionHead kicker="Our principles" title="How we do things here" />
+            <SectionHead kicker={S("about_principles").kicker} title={S("about_principles").title} />
             <div className="mt-14 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
               {whyUs.map((w, i) => (
                 <div key={w.title} className="border-t border-ink pt-6">
@@ -78,20 +81,14 @@ export default async function AboutPage() {
 
       <section className="section">
         <div className="container-x">
-          <SectionHead kicker="Who teaches here" title={<>The people <Mark>behind the classes.</Mark></>}
-            text="We only hire trainers who are doing the work right now — so what you learn on Monday is what the market is using on Monday." />
+          <SectionHead kicker={S("about_team").kicker} title={<TitleMark t={S("about_team")} />} text={S("about_team").text} />
           {mentors.length > 0 ? (
             <div className="mt-14 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
               {mentors.map((m) => <MentorCard key={m._id} m={m} />)}
             </div>
           ) : (
             <div className="mt-14 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-              {[
-                ["Active practitioners", "Every trainer runs live SEO, ads, automation or development projects alongside teaching."],
-                ["Show, then do", "Trainers demo on a real screen, then sit with you while you do it yourself."],
-                ["Honest feedback", "Your work is reviewed line by line — what's good, what's not, and how to fix it."],
-                ["Reachable", "Questions after class? Trainers stay for practice time and answer on the class group."],
-              ].map(([t, d], i) => (
+              {(s.trainerPrinciples || []).map(({ title: t, text: d }, i) => (
                 <div key={t} className="border-t border-ink pt-6">
                   <p className="font-serif text-4xl text-brand-600 italic">{String(i + 1).padStart(2, "0")}</p>
                   <h3 className="mt-5 text-xl font-bold tracking-tight">{t}</h3>
@@ -128,7 +125,7 @@ export default async function AboutPage() {
       {reviews.length > 0 && (
         <section className="section border-t border-line bg-white">
           <div className="container-x">
-            <SectionHead kicker="Student stories" title="In their own words" />
+            <SectionHead kicker={sec(s, "home_stories").kicker} title={sec(s, "home_stories").title} />
             <div className="mt-14 grid gap-6 md:grid-cols-3">{reviews.map((t) => <TestimonialCard key={t._id} t={t} />)}</div>
           </div>
         </section>
@@ -136,7 +133,7 @@ export default async function AboutPage() {
 
       <section className="section">
         <div className="container-x flex flex-col items-start justify-between gap-8 border-t border-ink pt-12 lg:flex-row lg:items-end">
-          <h2 className="display-2 max-w-3xl">Want to see if we&apos;re the right fit? <Mark>Let&apos;s talk.</Mark></h2>
+          <h2 className="display-2 max-w-3xl"><TitleMark t={S("about_cta")} /></h2>
           <div className="flex flex-wrap gap-3">
             <Link href="/admissions#apply" className="btn btn-primary btn-lg">Book a campus visit</Link>
             <Link href="/courses" className="btn btn-outline btn-lg">See programs <ArrowRight size={18} /></Link>
