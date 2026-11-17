@@ -13,7 +13,7 @@ const safeUrl = (u) => { try { return u ? new URL(u) : undefined; } catch { retu
 
 export async function generateMetadata() {
   const s = await getSettings().catch(() => null);
-  const name = s?.siteName || "eSkill Institute";
+  const name = s?.siteName || "Skill School";
   return {
     metadataBase: safeUrl(s?.siteUrl || process.env.SITE_URL),
     title: { default: s?.seoTitle || `${name} — ${s?.tagline || ""}`, template: `%s | ${name}` },

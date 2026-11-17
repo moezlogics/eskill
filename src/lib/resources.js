@@ -252,7 +252,7 @@ export const SETTINGS_FIELDS = [
 
   T("SEO & tracking"),
   H("Whole site"),
-  { name: "siteUrl", label: "Website URL", help: "e.g. https://eskills.pk — used for sitemap, canonical links and share previews" },
+  { name: "siteUrl", label: "Website URL", help: "e.g. https://skillschool.pk — used for sitemap, canonical links and share previews" },
   { name: "seoTitle", label: "Default SEO title", full: true },
   { name: "seoDescription", label: "Default SEO description", type: "textarea", rows: 2, full: true },
   { name: "ogImage", label: "Default share image (1200×630)", type: "image" },

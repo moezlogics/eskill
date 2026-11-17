@@ -6,6 +6,12 @@ export const TRACKS = [
   { name: "AI & Development", description: "Build websites, apps and AI automations — with code, with AI, or both." },
 ];
 
+// First intake. Change here (or later in Admin → Programs → Upcoming batches).
+export const FIRST_BATCHES = [
+  { startDate: new Date("2027-02-04T00:00:00Z"), days: "Tue · Thu · Sat", timing: "6:00 PM – 8:00 PM" },
+  { startDate: new Date("2027-02-06T00:00:00Z"), days: "Sat · Sun", timing: "11:00 AM – 2:00 PM" },
+];
+
 const M = (title, weeks, summary, topics) => ({ title, weeks, summary, topics });
 
 export const PROGRAMS = [

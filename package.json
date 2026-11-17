@@ -9,7 +9,8 @@
     "dev": "next dev",
     "build": "node scripts/seed.mjs --soft && next build",
     "start": "next start",
-    "seed": "node scripts/seed.mjs"
+    "seed": "node scripts/seed.mjs",
+    "rebrand": "node scripts/rebrand.mjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

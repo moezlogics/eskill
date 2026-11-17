@@ -7,11 +7,12 @@ const SOFT = process.argv.includes("--soft"); // used by build: never fail the b
 import bcrypt from "bcryptjs";
 import * as M from "../src/models/index.js";
 import { DEFAULT_SETTINGS } from "../src/lib/defaults.js";
-import { TRACKS, PROGRAMS, GENERAL_FAQS, POSTS } from "./programs.mjs";
+import { TRACKS, PROGRAMS, GENERAL_FAQS, POSTS, FIRST_BATCHES } from "./programs.mjs";
 
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/[\s-]+/g, "-");
 const inDays = (d) => { const x = new Date(); x.setUTCHours(0, 0, 0, 0); x.setUTCDate(x.getUTCDate() + d); return x; };
 const capacity = (s = "") => Number(String(s).match(/\d+/)?.[0]) || 20;
+
 
 async function main() {
   if (!process.env.MONGODB_URI) throw new Error("MONGODB_URI missing - add it to .env or .env.local");
@@ -56,15 +57,12 @@ async function main() {
     tools: p.tools.map((name) => ({ name })),
     projects: p.projects.map(([title, description]) => ({ title, description })),
     faqs: p.faqs.map(([question, answer]) => ({ question, answer })),
-    batches: [
-      { startDate: inDays(14 + (i % 5) * 7), timing: "6:00 PM – 8:00 PM", days: "Mon · Wed · Fri", seatsLeft: capacity(p.classSize) },
-      { startDate: inDays(42 + (i % 4) * 7), timing: "11:00 AM – 2:00 PM", days: "Sat · Sun", seatsLeft: capacity(p.classSize) },
-    ],
+    batches: FIRST_BATCHES.map((b) => ({ ...b, seatsLeft: capacity(p.classSize) })),
     sections: p.modules.map((m) => ({ title: m.title, weeks: m.weeks, summary: m.summary, lessons: m.topics.map((t) => ({ title: t, type: "text" })) })),
   })));
 
   await M.Faq.insertMany(GENERAL_FAQS.map(([question, answer], i) => ({ question, answer, order: i + 1 })));
-  await M.Post.insertMany(POSTS.map((p) => ({ ...p, author: "eSkill Team", published: true })));
+  await M.Post.insertMany(POSTS.map((p) => ({ ...p, author: "Skill School Team", published: true })));
 
   await M.Page.insertMany([
     ["Privacy Policy", "privacy-policy"],
@@ -77,7 +75,7 @@ async function main() {
 
   await M.Event.create({
     title: "Is SEO dead? Google vs AI search in 2026", slug: "seo-vs-ai-search-2026",
-    date: inDays(9), time: "Saturday · 4:00 PM", speaker: "SEO trainer", isFree: true, published: true,
+    date: new Date("2027-01-23T00:00:00Z"), time: "Saturday · 4:00 PM", speaker: "SEO trainer", isFree: true, published: true,
     description: "A free 90-minute on-campus session: how ChatGPT and Google AI Overviews are changing search, and what businesses and students should learn now. Bring your questions.",
   });
 

@@ -1,4 +1,4 @@
-# eSkill Institute — Website + LMS + Admin CMS
+# Skill School — Website + LMS + Admin CMS
 
 Next.js 16 · React 19 · MongoDB (Mongoose) · Tailwind CSS v4
 

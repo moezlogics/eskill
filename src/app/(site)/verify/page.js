@@ -23,7 +23,7 @@ export default async function VerifyPage({ searchParams }) {
           <form action="/verify" className="rounded-[24px] border border-line bg-white p-8">
             <label className="label">Certificate ID</label>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <input name="id" defaultValue={certId} required placeholder="e.g. EDU-2026-A1B2C3" className="input uppercase" />
+              <input name="id" defaultValue={certId} required placeholder="e.g. SKS-2027-0001" className="input uppercase" />
               <button className="btn btn-dark">Verify</button>
             </div>
             {missing && <p className="mt-4 rounded-lg bg-rose-50 p-3 text-sm text-rose-600">No certificate found with this ID. Please check and try again.</p>}

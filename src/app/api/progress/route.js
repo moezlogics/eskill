@@ -20,7 +20,7 @@ export async function POST(req) {
     enr.completedLessons = [...done];
     enr.progress = Math.round((done.size / ids.length) * 100);
     if (enr.progress >= 100 && !enr.certificateId) {
-      enr.certificateId = `EDU-${new Date().getFullYear()}-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
+      enr.certificateId = `SKS-${new Date().getFullYear()}-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
       enr.completedAt = new Date();
     }
     await enr.save();

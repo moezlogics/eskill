@@ -2,7 +2,7 @@ import { SECTION_DEFAULTS } from "./content.js";
 
 export const DEFAULT_SETTINGS = {
   ...SECTION_DEFAULTS,
-  siteUrl: "",
+  siteUrl: "https://skillschool.pk",
   ogImage: "",
   favicon: "",
   googleVerification: "",
@@ -22,19 +22,19 @@ export const DEFAULT_SETTINGS = {
     { title: "Reachable", text: "Questions after class? Trainers stay for practice time and answer on the class group." },
   ],
   certificatePoints: ["Awarded after your final project is reviewed", "Unique certificate ID for every student", "Anyone can verify it on our website", "Add it to your CV, LinkedIn and Fiverr/Upwork profile"],
-  siteName: "eSkill Institute",
+  siteName: "Skill School",
   tagline: "An on-campus institute for search, marketing, AI and web skills — taught by people who do the work.",
   logo: "",
   topbarText: "",
   phone: "+92 300 0000000",
   whatsapp: "923000000000",
-  email: "info@yourinstitute.pk",
+  email: "info@skillschool.pk",
   address: "Your campus address, City, Pakistan",
   campusHours: "Mon – Sat · 10:00 AM – 9:00 PM",
   mapEmbed: "",
   facebook: "", instagram: "", youtube: "", linkedin: "", tiktok: "",
 
-  heroBadge: "First batches now forming · On-campus",
+  heroBadge: "Admissions open · First batch starts 4 Feb 2027",
   heroTitle: "Learn the skills the internet",
   heroHighlight: "actually runs on.",
   heroSubtitle: "SEO for Google and AI search, social media, Meta ads, AI automation and web development — taught in Urdu & English, in small classroom batches, on real Pakistani businesses and projects.",
@@ -102,6 +102,6 @@ export const DEFAULT_SETTINGS = {
   paymentNote: "",
 
   footerAbout: "An on-campus institute teaching SEO, AI search, social media, Meta ads, AI automation, web development and vibe coding — in small, project-based batches.",
-  seoTitle: "eSkill Institute — SEO, AI Search, Marketing & Web Courses in Pakistan",
+  seoTitle: "Skill School — SEO, AI Search, Marketing & Web Courses in Pakistan",
   seoDescription: "On-campus courses in SEO, Local SEO, Technical SEO, AI SEO, AEO, GEO, social media marketing, Meta ads, AI automation, web development and vibe coding.",
 };
